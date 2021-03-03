@@ -10,7 +10,16 @@ Para clonar o projeto e colaborar:
 git clone https://github.com/cesant3/Lista-Negociacoes.git
 ```
 ## Desenvolvimento
-É necessario instalar o Node para rodar o servidor da aplicação.
+É necessario instalar o node_modules para rodar o servidor da aplicação.
+
+```bash
+npm install
+```
+Depois startar o servidor que irá rodar na porta 3000.
+
+```bash
+npm start
+```
 
 ## Licenças
 Licença MIT
