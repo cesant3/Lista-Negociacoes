@@ -43,23 +43,43 @@ class NegociacaoController {
     }
 
     importaNegociacoes() {
-        let xhr = new XMLHttpRequest();
-        xhr.open('GET', 'negociacoes/semana');
 
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    JSON.parse(xhr.responseText)
-                        .map((obj) => new Negociacao(new Date(obj.data), obj.quantidade, obj.valor))
-                        .forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+        let service = new NegociacaoService();
 
-                } else {
-                    console.log(xhr.responseText);
-                }
-            }
-        }
+        Promise.all([
+            service.obterNegociacoesDaSemana(),
+            service.obterNegociacoesDaSemanaAnterior(),
+            service.obterNegociacoesDaSemanaRetrasada()
+        ])
+            .then(negociacoes => {
+                negociacoes
+                    .reduce((arrayAchatado, array) => arrayAchatado.concat(array), [])
+                    .forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+                this._mensagem.texto = 'Importação com sucesso'
+            })
+            .catch(erro => this._mensagem.texto = erro);
 
-        xhr.send();        
+        // service.obterNegociacoesDaSemana()
+        //     .then(negociacoes => {
+        //         negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+        //         this._mensagem.texto = 'negociações importadas com sucesso'
+        //     })
+        //     .cath(erro => this._mensagem.texto = erro);
+
+        // service.obterNegociacoesDaSemanaAnterior()
+        //     .then(negociacoes => {
+        //         negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+        //         this._mensagem.texto = 'negociações importadas com sucesso'
+        //     })
+        //     .cath(erro => this._mensagem.texto = erro);
+
+        // service.obterNegociacoesDaSemanaRetrasada()
+        //     .then(negociacoes => {
+        //         negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+        //         this._mensagem.texto = 'negociações importadas com sucesso'
+        //     })
+        //     .cath(erro => this._mensagem.texto = erro);
+
     }
 
     _limpaFormulario() {
